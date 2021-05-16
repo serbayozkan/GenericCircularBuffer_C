@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
             data += 10;
         }
         else{
-            printf("Push Operation to Empty Circular Buffer!\n");
+            printf("Push Operation to Full Circular Buffer!\n");
         }
     }
 
