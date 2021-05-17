@@ -1,9 +1,11 @@
 # Generic Circular/Ring Buffer Data Structure Library for Embedded Devices
 
 ## Library
-**Static Lib** -> Uses memory and object pool for allocation of Circular Buffer objects
 
-**Dynamic Lib** -> Uses dynamic memory only in initilization for allocation of Circular Buffer objects
+| Library Folder                  | Definition                                                          |
+| --------------------------------|---------------------------------------------------------------------|
+| **Static**        | Uses only static memory allocation by using object/memory pool for Circular Buffer objects | 
+| **Dynamic**        | Uses dynamic memory but only in initilization for allocation of Circular Buffer objects |   
 
 ## Examples
 **STM32F4_DISCOVERY**
