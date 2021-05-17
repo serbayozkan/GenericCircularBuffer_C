@@ -8,7 +8,6 @@
   */
 
 /* Standard Library Header Files */
-#include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 
@@ -17,12 +16,9 @@
 
 /* Circular Buffer Data Structure */
 struct circularBuffer{
-    /* Manages the whether circular buffer in use (true) or not (false) */
-    bool inUse;
-
     /* Tracks the pop operation */
     int head;
-    
+
     /* Tracks the push operation */
     int tail;
 
@@ -33,58 +29,46 @@ struct circularBuffer{
     int capacity;
 
     /* Byte Array */
-    uint8_t data[CB_MAX_BUFFER_POOL_SIZE];
+    uint8_t *data;
 };
 
-/* Private Variables */
-static int instanceNumber = 0;
-static circularBuffer_t circularBufferPool[CB_MAX_INSTANCE_POOL_SIZE];
-
-/* Private Function Declerations */
-static circularBuffer_t *circular_buffer_find_unused_instance(void);
-
-/* Private Function Definitions */
-static circularBuffer_t *circular_buffer_find_unused_instance(void)
-{
-    for (int i = 0; i < CB_MAX_INSTANCE_POOL_SIZE; i++){
-        if (circularBufferPool[i].inUse == false)
-            return &circularBufferPool[i];
-    }
-}
-
 /* Creates and inits new circular buffer object */
-circularBuffer_t *circular_buffer_init(size_t itemSize)
+circularBuffer_t *circular_buffer_init(size_t itemSize, int capacity)
 {
-    if (instanceNumber == CB_MAX_INSTANCE_POOL_SIZE - 1)
+    if (capacity <= 0)
         return NULL;
 
-    circularBuffer_t *newCircularBuffer = circular_buffer_find_unused_instance();
-    newCircularBuffer->itemSize = itemSize;
-    newCircularBuffer->capacity = CB_MAX_BUFFER_POOL_SIZE / itemSize;
+    circularBuffer_t *newCircularBuffer = (circularBuffer_t *)malloc(sizeof(circularBuffer_t));
 
-    /* We could not create item in Circular Buffer Pool */
-    /* Item Size is too big to create item in Circular Buffer Pool */
-    if (newCircularBuffer->capacity == 0)
-        return NULL;
+    if (newCircularBuffer){
+        newCircularBuffer->itemSize = itemSize;
+        newCircularBuffer->capacity = capacity;
+        newCircularBuffer->head = 0;
+        newCircularBuffer->tail = 0;
+        /* Capacity + 1 space is allocated since there is need for one extra space for circular buffer tracing algorithm */
+        newCircularBuffer->data = (void *)malloc(itemSize * (capacity + 1));
 
-    newCircularBuffer->head = 0;
-    newCircularBuffer->tail = 0;
-    newCircularBuffer->inUse = true;
-    (void) memset(newCircularBuffer->data, 0, CB_MAX_BUFFER_POOL_SIZE);
-    instanceNumber++;
-
+        if (!newCircularBuffer->data){
+            free(newCircularBuffer);
+            return NULL;
+        }
+     
+        (void) memset(newCircularBuffer->data, 0, itemSize * (capacity + 1));
+    }
+    
     return newCircularBuffer;
 }
 
-/* Deletes the circular buffer object */
-void circular_buffer_destroy(circularBuffer_t *circularBuffer)
+/* Deletes the circular buffer object and frees the allocated space */
+void circular_buffer_destroy(circularBuffer_t **circularBuffer)
 {
-    if (!circularBuffer || instanceNumber == 0)
+    if (!(*circularBuffer))
         return;
 
-    (void) memset(circularBuffer->data, 0, CB_MAX_BUFFER_POOL_SIZE);
-    circularBuffer->inUse = false;
-    instanceNumber--;
+    if ((*circularBuffer)->data)
+        free((*circularBuffer)->data);
+    free(*circularBuffer);
+    *circularBuffer = NULL;
 }
 
 /* Pushes new data to buffer and moves tail to next position */
@@ -104,7 +88,7 @@ bool circular_buffer_pop(circularBuffer_t *const circularBuffer, void *data)
 {
     if (circular_buffer_empty(circularBuffer))
         return false;
-    
+  
     (void) memcpy(data, (void *)&circularBuffer->data[circularBuffer->head + 1], circularBuffer->itemSize);
     circularBuffer->data[circularBuffer->head] = 0;
     circularBuffer->head += circularBuffer->itemSize;
@@ -131,7 +115,7 @@ bool circular_buffer_full(const circularBuffer_t *const circularBuffer)
     /*  If the next move of tail equals to head, it means that circular buffer is full.
         Since the buffer is circular, we should take the mode of tail with capacity
         to calculate the next position of tail pointer */
-    return (((circularBuffer->tail + circularBuffer->itemSize) % (circularBuffer->capacity * circularBuffer->itemSize)) 
+    return (((circularBuffer->tail + circularBuffer->itemSize) % ((circularBuffer->capacity + 1) * circularBuffer->itemSize)) 
                  == circularBuffer->head) ? true : false;
 }
 
@@ -141,10 +125,10 @@ int circular_buffer_free_space(const circularBuffer_t *const circularBuffer)
     int freeSpace = 0;
 
     if (circularBuffer->head > circularBuffer->tail)
-        freeSpace = circularBuffer->capacity - ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize) - 1;
+        freeSpace = circularBuffer->capacity - ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize);
     else 
-        freeSpace = circularBuffer->capacity - ((circularBuffer->tail - circularBuffer->head) / circularBuffer->itemSize) - 1;
-    
+        freeSpace = circularBuffer->capacity - ((circularBuffer->tail - circularBuffer->head) / circularBuffer->itemSize);
+
     return freeSpace;
 }
 
