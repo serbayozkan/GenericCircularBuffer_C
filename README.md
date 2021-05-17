@@ -12,7 +12,16 @@ Data taken from ISR (UART Receive Completed Callback) is pushed to circular buff
 
 ## APIs
 
-![Circular_Buffer_API_List](https://user-images.githubusercontent.com/43597729/118403931-7da20400-b679-11eb-9364-aac6923e6732.png)
+| API Name                        | Definition                                                          |
+| --------------------------------|---------------------------------------------------------------------| 
+| **circular_buffer_init**        | Creates and inits new circular buffer object                        |    
+| **circular_buffer_destroy**     | Deletes the circular buffer object and frees the allocated space    | 
+| **circular_buffer_push**        | Pushes new data to buffer and moves tail to next position           | 
+| **circular_buffer_pop**         | Poppes data from buffer and moves head to next position             | 
+| **circular_buffer_empty**       | Checks whether the circular buffer empty (true) or not (false)      | 
+| **circular_buffer_full**        | Checks whether the circular buffer full (true) or not (false)       | 
+| **circular_buffer_free_space**  | Gets the free available space in circular buffer                    | 
+| **circular_buffer_capacity**    | Gets the capacity of circular buffer                                | 
 
 ## Licencing
 Licenced the under the MIT open source licence
@@ -21,3 +30,7 @@ Licenced the under the MIT open source licence
 serbay_ozkan@hotmail.com 
 
 https://www.linkedin.com/in/serbayozkan/
+
+
+
+
