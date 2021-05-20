@@ -25,6 +25,15 @@ Data taken from ISR (UART Receive Completed Callback) is pushed to circular buff
 | **circular_buffer_free_space**  | Gets the free available space in circular buffer                    | 
 | **circular_buffer_capacity**    | Gets the capacity of circular buffer                                | 
 
+## Make
+
+| Command                  | Definition                                                          |
+| --------------------------------|---------------------------------------------------------------------|
+| **make**        | Runs the circular buffer test with both static and dynamic memory allocation schemes  | 
+| **make static**        | Runs the circular buffer test with static memory allocation scheme  | 
+| **make dynamic**        | Runs the circular buffer test with dynamic memory allocation scheme |
+| **make clean**        | Cleans the builded files |   
+
 ## Licencing
 Licenced the under the MIT open source licence
 
@@ -32,7 +41,3 @@ Licenced the under the MIT open source licence
 serbay_ozkan@hotmail.com 
 
 https://www.linkedin.com/in/serbayozkan/
-
-
-
-
