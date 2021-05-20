@@ -10,6 +10,11 @@
 #ifndef CIRCULAR_BUFFER_H_
 #define CIRCULAR_BUFFER_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 /* Standard Library Header Files */
 #include <stdbool.h>
 #include <stdlib.h>
@@ -40,5 +45,9 @@ int circular_buffer_free_space(const circularBuffer_t *const circularBuffer);
 
 /* Gets the capacity of circular buffer */
 int circular_buffer_capacity(const circularBuffer_t *const circularBuffer);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* CIRCULAR_BUFFER_H_ */
