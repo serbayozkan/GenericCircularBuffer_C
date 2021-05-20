@@ -8,14 +8,6 @@
   */
 
 /* Private Macro Definitions */
-
-#define CB_STATIC
-// #define CB_DYNAMIC
-
-#if defined CB_STATIC && defined CB_DYNAMIC
-#error "Please choose only static or dynamic circular buffer design"
-#endif
-
 #define CB_TEST_CIRC_BUFFER_ITEM_SIZE                ( 16 )
 
 /* Standard Library Header Files */
@@ -26,13 +18,7 @@
 
 int main(int argc, char *argv[])
 {
-    #ifdef CB_DYNAMIC
-    circularBuffer_t *circBuffer = circular_buffer_init(sizeof(int), CB_TEST_CIRC_BUFFER_ITEM_SIZE);
-    #endif
-
-    #ifdef CB_STATIC
     circularBuffer_t *circBuffer = circular_buffer_init(sizeof(int));
-    #endif
 
     int data = 0;
 
@@ -68,16 +54,8 @@ int main(int argc, char *argv[])
 
     printf("Available space in circular buffer: %d\n", circular_buffer_free_space(circBuffer));
 
-    #ifdef CB_DYNAMIC
-    circular_buffer_destroy(&circBuffer);
-
-    if (circBuffer == NULL)
-        printf("Circular Buffer is destroyed!\n");
-    #endif
-
-    #ifdef CB_STATIC
     circular_buffer_destroy(circBuffer);
-    #endif
-    
+  
     return EXIT_SUCCESS;
 }
+
