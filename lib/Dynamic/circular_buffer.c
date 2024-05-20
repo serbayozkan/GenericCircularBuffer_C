@@ -127,7 +127,7 @@ int circular_buffer_free_space(const circularBuffer_t *const circularBuffer)
     int freeSpace = 0;
 
     if (circularBuffer->head > circularBuffer->tail)
-        freeSpace = circularBuffer->capacity - ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize);
+        freeSpace = ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize) - 1;
     else 
         freeSpace = circularBuffer->capacity - ((circularBuffer->tail - circularBuffer->head) / circularBuffer->itemSize);
     
