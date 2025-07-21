@@ -76,9 +76,10 @@ bool circular_buffer_push(circularBuffer_t *const circularBuffer, const void *da
 {
     if (circular_buffer_full(circularBuffer))
         return false;
-    
-    (void) memcpy((void *)&circularBuffer->data[circularBuffer->tail + 1], data, circularBuffer->itemSize);
-    circularBuffer->tail += circularBuffer->itemSize;
+
+    int index = (circularBuffer->tail + 1) % (circularBuffer->capacity * circularBuffer->itemSize);
+    (void)memcpy((void *)&circularBuffer->data[index], data, circularBuffer->itemSize);
+    circularBuffer->tail = (circularBuffer->tail + circularBuffer->itemSize) % (circularBuffer->capacity * circularBuffer->itemSize);
  
     return true;
 }
@@ -88,10 +89,11 @@ bool circular_buffer_pop(circularBuffer_t *const circularBuffer, void *data)
 {
     if (circular_buffer_empty(circularBuffer))
         return false;
-  
-    (void) memcpy(data, (void *)&circularBuffer->data[circularBuffer->head + 1], circularBuffer->itemSize);
+
+    int index = (circularBuffer->head + 1) % (circularBuffer->capacity * circularBuffer->itemSize);
+    (void)memcpy(data, (void *)&circularBuffer->data[index], circularBuffer->itemSize);
     circularBuffer->data[circularBuffer->head] = 0;
-    circularBuffer->head += circularBuffer->itemSize;
+    circularBuffer->head = (circularBuffer->head + circularBuffer->itemSize) % (circularBuffer->capacity * circularBuffer->itemSize);
 
     if (circular_buffer_empty(circularBuffer)){
         circularBuffer->head = 0;
@@ -125,7 +127,7 @@ int circular_buffer_free_space(const circularBuffer_t *const circularBuffer)
     int freeSpace = 0;
 
     if (circularBuffer->head > circularBuffer->tail)
-        freeSpace = circularBuffer->capacity - ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize);
+        freeSpace = ((circularBuffer->head - circularBuffer->tail) / circularBuffer->itemSize) - 1;
     else 
         freeSpace = circularBuffer->capacity - ((circularBuffer->tail - circularBuffer->head) / circularBuffer->itemSize);
     
